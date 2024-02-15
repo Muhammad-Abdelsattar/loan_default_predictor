@@ -1,0 +1,163 @@
+schema: '2.0'
+stages:
+  prepare_data:
+    cmd: python src/prepare_data.py
+    deps:
+    - path: input/test.csv
+      hash: md5
+      md5: 0221cbd09b09a9839ec884174e95d0c1
+      size: 5667672
+    - path: input/train.csv
+      hash: md5
+      md5: dd8f2c81438221a994e2e3a91acd3134
+      size: 22664173
+    - path: src/data
+      hash: md5
+      md5: 83461822e1a94dbcfb14a0d8372da56a.dir
+      size: 10391
+      nfiles: 8
+    - path: src/prepare_data.py
+      hash: md5
+      md5: c7b9b1b7ba93030da7428d1d90d0db39
+      size: 965
+    params:
+      params.yaml:
+        data:
+          path: /teamspace/studios/this_studio/Projects/loan_default_predictor/input
+          impute:
+            numerical:
+            - - rate_of_interest
+              - total_units
+            - - income
+              - total_units
+            - - Interest_rate_spread
+              - loan_type
+            - - Upfront_charges
+              - total_units
+            - - term
+              - total_units
+            - - dtir1
+              - total_units
+            - - property_value
+              - loan_type
+            - - LTV
+              - loan_type
+    outs:
+    - path: input/clean_test.csv
+      hash: md5
+      md5: 622ee27533a4fac6703a2855c4d6e0e4
+      size: 5552062
+    - path: input/clean_train.csv
+      hash: md5
+      md5: 2169a15fb16d46c9fa336f5f5e2711db
+      size: 22207888
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: input/clean_test.csv
+      hash: md5
+      md5: 622ee27533a4fac6703a2855c4d6e0e4
+      size: 5552062
+    - path: input/clean_train.csv
+      hash: md5
+      md5: 2169a15fb16d46c9fa336f5f5e2711db
+      size: 22207888
+    - path: src/modeling
+      hash: md5
+      md5: 5e602701418287ec6cca4f3501aa278f.dir
+      size: 2646
+      nfiles: 6
+    - path: src/train.py
+      hash: md5
+      md5: 8eb30a1538cf50cfbcc83a20dabc7c73
+      size: 1451
+    - path: src/training
+      hash: md5
+      md5: 6c6b64f4bb53c5b642fb35f342da9d25.dir
+      size: 2093
+      nfiles: 7
+    params:
+      params.yaml:
+        pipeline:
+          path: 
+            /teamspace/studios/this_studio/Projects/loan_default_predictor/artifacts/models/model.joblib
+          model:
+            name: XGB
+            params:
+              n_estimators: 100
+              num_leaves: 8
+              max_leaves: 8
+              max_depth: 5
+          preprocessor:
+            numerical:
+              MinMax:
+              - Credit_Score
+              - term
+              StandardScaler:
+              - rate_of_interest
+              - Interest_rate_spread
+              - dtir1
+              PowerTransformer:
+              - loan_amount
+              - LTV
+              - property_value
+              - income
+              - Upfront_charges
+            categorical:
+              OneHotEncoder:
+              - loan_limit
+              - Gender
+              - approv_in_adv
+              - loan_type
+              - loan_purpose
+              - Credit_Worthiness
+              - open_credit
+              - business_or_commercial
+              - Neg_ammortization
+              - interest_only
+              - lump_sum_payment
+              - construction_type
+              - occupancy_type
+              - Secured_by
+              - total_units
+              - credit_type
+              - co-applicant_credit_type
+              - age
+              - submission_of_application
+              - Region
+              - Security_Type
+        train:
+          num_folds: 2
+          scoring: f1
+    outs:
+    - path: artifacts/models/model.joblib
+      hash: md5
+      md5: 95de67fd9e84b7a184ee794f7b1eb70c
+      size: 131244
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+    - path: artifacts/models/model.joblib
+      hash: md5
+      md5: 95de67fd9e84b7a184ee794f7b1eb70c
+      size: 131244
+    - path: src/evaluate.py
+      hash: md5
+      md5: 38c9d9c1e4758f0eacad9cd4bcea53df
+      size: 1002
+    - path: src/evaluation
+      hash: md5
+      md5: 7336df6ad0e90a876ceceba9a7d6c63f.dir
+      size: 2432
+      nfiles: 6
+    params:
+      params.yaml:
+        eval:
+          metrics: 
+            /teamspace/studios/this_studio/Projects/loan_default_predictor/reports/metrics/metrics.json
+          plots: /teamspace/studios/this_studio/Projects/loan_default_predictor/reports/plots
+    outs:
+    - path: reports/metrics/metrics.json
+      hash: md5
+      md5: 1699f94981be4e65998a7134ce83ec66
+      size: 138

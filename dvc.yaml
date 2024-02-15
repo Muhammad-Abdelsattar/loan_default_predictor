@@ -1,0 +1,38 @@
+stages:
+  prepare_data:
+    cmd: python src/prepare_data.py
+    deps:
+    - input/train.csv
+    - input/test.csv
+    - src/data
+    - src/prepare_data.py
+    params:
+    - data
+    outs:
+    - input/clean_test.csv
+    - input/clean_train.csv
+  train:
+    cmd: python src/train.py
+    deps:
+    - input/clean_train.csv
+    - input/clean_test.csv
+    - src/modeling
+    - src/train.py
+    - src/training
+    params:
+    - pipeline
+    - train
+    outs:
+    - artifacts/models/model.joblib
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+    - artifacts/models/model.joblib
+    - src/evaluate.py
+    - src/evaluation
+    params:
+    - eval
+    outs:
+    - reports/metrics/metrics.json
+metrics:
+  - reports/metrics/metrics.json

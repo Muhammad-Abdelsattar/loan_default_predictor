@@ -1,0 +1,40 @@
+base: 
+    random_state: 42 
+pipeline:
+    path: /teamspace/studios/this_studio/Projects/loan_default_predictor/artifacts/models/model.joblib
+    model:
+        name: XGB
+        params: 
+            n_estimators: 100
+            num_leaves: 8
+            max_leaves: 8
+            max_depth: 5
+    preprocessor:
+        numerical:
+            MinMax: [Credit_Score,term]
+            StandardScaler: [rate_of_interest,Interest_rate_spread,dtir1]
+            PowerTransformer: [loan_amount,LTV,property_value,income,Upfront_charges]
+        categorical:
+            OneHotEncoder: [loan_limit, Gender, approv_in_adv, loan_type, loan_purpose,Credit_Worthiness, open_credit, business_or_commercial,Neg_ammortization, interest_only, lump_sum_payment,construction_type, occupancy_type, Secured_by, total_units,credit_type, co-applicant_credit_type, age,submission_of_application, Region, Security_Type]
+
+train:
+    num_folds: 2
+    scoring: f1
+
+eval:
+    metrics: /teamspace/studios/this_studio/Projects/loan_default_predictor/reports/metrics/metrics.json
+    plots: /teamspace/studios/this_studio/Projects/loan_default_predictor/reports/plots
+
+data:
+    path: /teamspace/studios/this_studio/Projects/loan_default_predictor/input
+    impute:
+        numerical: [
+                    ["rate_of_interest","total_units"],
+                    ["income","total_units"],
+                    ["Interest_rate_spread","loan_type"],
+                    ["Upfront_charges","total_units"],
+                    ["term","total_units"],
+                    ["dtir1","total_units"],
+                    ["property_value","loan_type"],
+                    ["LTV","loan_type"]
+                    ]
