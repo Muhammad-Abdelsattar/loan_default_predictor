@@ -1,7 +1,7 @@
 base: 
     random_state: 42 
 pipeline:
-    path: /teamspace/studios/this_studio/Projects/loan_default_predictor/artifacts/models/model.joblib
+    path: artifacts/models/model.joblib
     model:
         name: XGB
         params: 
@@ -22,11 +22,11 @@ train:
     scoring: f1
 
 eval:
-    metrics: /teamspace/studios/this_studio/Projects/loan_default_predictor/reports/metrics/metrics.json
-    plots: /teamspace/studios/this_studio/Projects/loan_default_predictor/reports/plots
+    metrics: reports/metrics/metrics.json
+    plots: reports/plots
 
 data:
-    path: /teamspace/studios/this_studio/Projects/loan_default_predictor/input
+    path: input
     impute:
         numerical: [
                     ["rate_of_interest","total_units"],
