@@ -33,6 +33,7 @@ stages:
     params:
     - eval
     outs:
-    - reports/metrics/metrics.json
+    - reports/metrics/metrics.json:
+        cache: false
 metrics:
   - reports/metrics/metrics.json
